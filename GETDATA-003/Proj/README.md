@@ -1,11 +1,14 @@
-*Raw data set for this project was downloaded from:
+### Raw data set:
+===================================================================================
+* Raw data set for this project was downloaded from:
 http://archive.ics.uci.edu/ml/machine-learning-databases/00240/
 
-*For more info, please visit:
+* For more info, please visit:
 http://archive.ics.uci.edu/ml/datasets/Human+Activity+Recognition+Using+Smartphones
+===================================================================================
 
-### DataSet Analysis:
-
+### Data Set Analysis:
+===================================================================================
 Broadly the analysis was done to combine data from training and test sets, 
 then extract features of interest and finally produce a summary of average values
 of the selected features.
@@ -88,7 +91,7 @@ The analysis was done using a script "runAnalysis.R" in the following steps:
     
     
 
-* Reference:
+### Reference:
 ==================================================================
 Human Activity Recognition Using Smartphones Dataset
 Version 1.0
