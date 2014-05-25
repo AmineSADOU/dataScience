@@ -17,7 +17,7 @@ dfTrainSub.tmp <- read.table("./train/subject_train.txt")
 # inspect number of observations in training set
 dfTrainSet.tmp <- cbind(read.table("./train/y_train.txt"), 
                         read.table("./train/x_train.txt"))
-# same number of rows, therefore columns could be combined
+# same number of rows exist, therefore columns could be combined
 dfTrainSet.tmp <- cbind(dfTrainSub.tmp, dfTrainSet.tmp)
 
 # inspect number of test subjects
@@ -25,7 +25,7 @@ dfTestSub.tmp <- read.table("./test/subject_test.txt")
 # inspect number of observations in test set
 dfTestSet.tmp <- cbind(read.table("./test/y_test.txt"), 
                        read.table("./test/x_test.txt"))
-# same number of rows, therefore columns could be combined
+# same number of rows exist, therefore columns could be combined
 dfTestSet.tmp <- cbind(dfTestSub.tmp, dfTestSet.tmp)
 
 # dfTrainSet and dfTestSet have same number of columns
@@ -48,26 +48,17 @@ dfDataSet.full$Activity <- with(dfDataSet.full,
 # regex filter for mean and std types in tBodyAcc, tBodyGyro & tGravityAcc data columns
 # i.e. choose only those features that are measured, not derived
 regexPattern <- "^(t(body|gravity)(acc|gyro)(mean|std))"
+# search for feature indices
 vFeatures.indices <- grep(regexPattern, vFeatures, ignore.case=T, value=F)
+# create a subset vector of these features
 vFeatures.sub <- vFeatures[vFeatures.indices]
-vFeatures.names <- c("ACCELEROMETER_BODY_X_MEAN", 
-                    "ACCELEROMETER_BODY_Y_MEAN", 
-                    "ACCELEROMETER_BODY_Z_MEAN",
-                    "ACCELEROMETER_BODY_X_STDEV", 
-                    "ACCELEROMETER_BODY_Y_STDEV", 
-                    "ACCELEROMETER_BODY_Z_STDEV",
-                    "ACCELEROMETER_GRAVITY_X_MEAN", 
-                    "ACCELEROMETER_GRAVITY_Y_MEAN", 
-                    "ACCELEROMETER_GRAVITY_Z_MEAN",
-                    "ACCELEROMETER_GRAVITY_X_STDEV", 
-                    "ACCELEROMETER_GRAVITY_Y_STDEV", 
-                    "ACCELEROMETER_GRAVITY_Z_STDEV",
-                    "GYROSCOPE_BODY_X_MEAN", 
-                    "GYROSCOPE_BODY_Y_MEAN", 
-                    "GYROSCOPE_BODY_Z_MEAN",
-                    "GYROSCOPE_BODY_X_STDEV", 
-                    "GYROSCOPE_BODY_Y_STDEV", 
-                    "GYROSCOPE_BODY_Z_STDEV")
+# choose a descriptive name that could be mapped to each feature for tidy data
+vFeatures.names <- c("ACCELEROMETER_BODY_X_MEAN", "ACCELEROMETER_BODY_Y_MEAN", "ACCELEROMETER_BODY_Z_MEAN",
+                     "ACCELEROMETER_BODY_X_STDEV", "ACCELEROMETER_BODY_Y_STDEV", "ACCELEROMETER_BODY_Z_STDEV",
+                     "ACCELEROMETER_GRAVITY_X_MEAN", "ACCELEROMETER_GRAVITY_Y_MEAN", "ACCELEROMETER_GRAVITY_Z_MEAN",
+                     "ACCELEROMETER_GRAVITY_X_STDEV", "ACCELEROMETER_GRAVITY_Y_STDEV", "ACCELEROMETER_GRAVITY_Z_STDEV",
+                     "GYROSCOPE_BODY_X_MEAN", "GYROSCOPE_BODY_Y_MEAN", "GYROSCOPE_BODY_Z_MEAN",
+                     "GYROSCOPE_BODY_X_STDEV", "GYROSCOPE_BODY_Y_STDEV", "GYROSCOPE_BODY_Z_STDEV")
 
 # extract from dfDataSet.full, columns numbers that match vFeatureIndices
 # feature columns are offsetted by 2 because of SubjectID and Activity columns
@@ -85,25 +76,38 @@ dfDataSet.molten$SignalMeasure <- with(dfDataSet.molten,
                                        {mapvalues(SignalMeasure, 
                                                   from=levels(SignalMeasure), 
                                                   to=vFeatures.names)})
-# separate SignalMeasure into separate variables
+# SignalMeasure is composed of 4 characteristics
 dfDataSet.molten <- transform(dfDataSet.molten, SignalMeasure=as.character(SignalMeasure))
 
+# SignalMeasure variables are composed of 4 separate characteristics:
+# 1. SensorType - sensor from which a signal was recorded (ACCELROMETER / GYROSCOPE)
+# 2. SignalSource - source which produced acceleration signals (BODY / GRAVITY)
+# 3. SignalAxis - axis along which a signal was measured (X / Y / Z)
+# 4. SignalStatistic - signal statistic (MEAN / STDEV) created by applying a low-pass Butterworth filter 
+# SignalMeasure could be separated into new variables
 lSignalMeasure <- strsplit(dfDataSet.molten$SignalMeasure,"_")
+# create a data frame from the list above using ldply
 dfSignalMeasure <- ldply(lSignalMeasure)
+# rename columns according to characteristics of variables
 colnames(dfSignalMeasure) <- c("SensorType","SignalSource","SignalAxis","SignalStatistic")
+# combine with dfDataSet.molten to add these separate characteristics created from SignalMeasure
 dfDataSet.molten <- cbind(dfDataSet.molten, dfSignalMeasure)
 
+# transform columns to be factors instead of character vectors
 dfDataSet.molten <- transform(dfDataSet.molten, 
                               SensorType=as.factor(SensorType),
                               SignalSource=as.factor(SignalSource),
                               SignalAxis=as.factor(SignalAxis),
                               SignalStatistic=as.factor(SignalStatistic))
 
+# reorder columns excluding SignalMeasure
 dfDataSet.molten <- dfDataSet.molten[c("SubjectID","Activity","SensorType","SignalSource","SignalStatistic","SignalAxis","SignalStatisticValue")]
+
+# create a summary data set with average values of SignalStatisticValue for each feature
 dfDataSet.summary <- ddply(dfDataSet.molten, 
                            c("SubjectID","Activity","SensorType","SignalSource","SignalStatistic","SignalAxis"),
                            summarise, SignalStatisticAverage=mean(SignalStatisticValue))
 
-# output this tidy data set summary to file
+# output this tidy data set summary to file with column headers
 write.table(dfDataSet.summary, file="signal_measure_summary.txt", 
             sep="\t", quote=F, row.names=F)
