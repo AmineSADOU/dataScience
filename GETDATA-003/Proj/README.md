@@ -47,13 +47,9 @@ The analysis was done using a script "runAnalysis.R" in the following steps:
     
     Create a regular expression pattern regexPattern to select mean and std features
     from the features that are 'measured'. These are time domain signal features of 
-    interest for this analysis. 18 such features are selected.
-    Each feature is a combination of 4 separate characteritics namely:
-    SignalSource, SensorType, SignalAxis, SignalStatistic.
-    Example: Body,Acc,Mean,X in tBodyAccMeanX
-    
-    A descriptive name is chosen for each feature to be used for separating these
-    characteristics. Example: ACCELEROMETER_BODY_MEAN_X
+    interest for this analysis. 18 such features are selected.    
+    A descriptive name is chosen for each feature to be used for each feature.
+    Example: ACCELEROMETER_BODY_MEAN_X instead of tBodyAccMeanX
     A vector of such descriptive names vFeatures.names is created.
     
 * A subset data set dfDataSet.sub is extracted from dfDataSet.full
@@ -68,12 +64,17 @@ The analysis was done using a script "runAnalysis.R" in the following steps:
     185382 obs. of 4 variables. SignalMeasure column is transformed into factors instead
     of a vector of characters. Finally vFeatures.names values are mapped into this column.
     
-* In dfDataSet.molten, the SignalMeasure column is transformed back to a character vector
-    that could be split by its 4 sub-characterisitcs:
-    SensorType,SignalSource,SignalStatistic,SignalAxis.
-    Example: ACCELEROMETER_BODY_MEAN_X is split into ACCELEROMETER,BODY,MEAN,X
-    A data frame dfSignalMeasure is combined by columns with dfDataSet.molten.
-    The 4 new characteristics are transformed into factors.
+* In dfDataSet.molten, the SignalMeasure column is transformed to a character vector
+    Each feature in SignalMeasure is a combination of 4 separate characteritics namely:
+    SignalSource, SensorType, SignalStatistic, SignalAxis.
+    This violates the first principle of tidy data which states that each variable
+    measured should be in one column.
+    Therefore these characterisitics should be split into separate columns.
+    Example: ACCELEROMETER_BODY_MEAN_X should be split into ACCELEROMETER,BODY,MEAN,X
+    A data frame dfSignalMeasure is created having 185382 obs. of these 4 variables.
+    It is combined columnwise with dfDataSet.molten.
+    The 4 new characteristics: SignalSource, SensorType, SignalStatistic, SignalAxis
+    are transformed into factors.
     
 * dfDataSet.molten columns are reordered after excluding SignalMeasure column that is
     already split into 4 separate columns. The final data frame dfDataSet.molten has
