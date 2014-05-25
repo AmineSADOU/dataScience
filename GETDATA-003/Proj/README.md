@@ -1,13 +1,13 @@
-### Raw data set:
 ===================================================================================
+### Raw data set:
 * Raw data set for this project was downloaded from:
     http://archive.ics.uci.edu/ml/machine-learning-databases/00240/
 
 * For more info, please visit:
     http://archive.ics.uci.edu/ml/datasets/Human+Activity+Recognition+Using+Smartphones
 
-### Data Set Analysis:
 ===================================================================================
+### Data Set Analysis:
 Broadly the analysis was done to combine data from training and test sets, 
 then extract features of interest and finally produce a summary of average values
 of the selected features.
@@ -90,15 +90,15 @@ The analysis was done using a script "runAnalysis.R" in the following steps:
     
     
 
+==================================================================
 ### Reference:
+    Human Activity Recognition Using Smartphones Dataset
+    Version 1.0
 ==================================================================
-Human Activity Recognition Using Smartphones Dataset
-Version 1.0
-==================================================================
-Jorge L. Reyes-Ortiz, Davide Anguita, Alessandro Ghio, Luca Oneto.
-Smartlab - Non Linear Complex Systems Laboratory
-DITEN - Universit‡ degli Studi di Genova.
-Via Opera Pia 11A, I-16145, Genoa, Italy.
-activityrecognition@smartlab.ws
-www.smartlab.ws
+    Jorge L. Reyes-Ortiz, Davide Anguita, Alessandro Ghio, Luca Oneto.
+    Smartlab - Non Linear Complex Systems Laboratory
+    DITEN - Universit‡ degli Studi di Genova.
+    Via Opera Pia 11A, I-16145, Genoa, Italy.
+    activityrecognition@smartlab.ws
+    www.smartlab.ws
 ==================================================================
