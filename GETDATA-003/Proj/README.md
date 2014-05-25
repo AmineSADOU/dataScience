@@ -1,11 +1,10 @@
 ### Raw data set:
 ===================================================================================
 * Raw data set for this project was downloaded from:
-http://archive.ics.uci.edu/ml/machine-learning-databases/00240/
+    http://archive.ics.uci.edu/ml/machine-learning-databases/00240/
 
 * For more info, please visit:
-http://archive.ics.uci.edu/ml/datasets/Human+Activity+Recognition+Using+Smartphones
-===================================================================================
+    http://archive.ics.uci.edu/ml/datasets/Human+Activity+Recognition+Using+Smartphones
 
 ### Data Set Analysis:
 ===================================================================================
