@@ -54,11 +54,11 @@ vFeatures.indices <- grep(regexPattern, vFeatures, ignore.case=T, value=F)
 vFeatures.sub <- vFeatures[vFeatures.indices]
 # choose a descriptive name that could be mapped to each feature for tidy data
 vFeatures.names <- c("ACCELEROMETER_BODY_MEAN_X", "ACCELEROMETER_BODY_MEAN_Y", "ACCELEROMETER_BODY_MEAN_Z",
-                     "ACCELEROMETER_BODY_STDEV_X", "ACCELEROMETER_BODY_STDEV_Y", "ACCELEROMETER_BODY_STDEV_Z",
+                     "ACCELEROMETER_BODY_STANDARDDEVIATION_X", "ACCELEROMETER_BODY_STANDARDDEVIATION_Y", "ACCELEROMETER_BODY_STANDARDDEVIATION_Z",
                      "ACCELEROMETER_GRAVITY_MEAN_X", "ACCELEROMETER_GRAVITY_MEAN_Y", "ACCELEROMETER_GRAVITY_MEAN_Z",
-                     "ACCELEROMETER_GRAVITY_STDEV_X", "ACCELEROMETER_GRAVITY_STDEV_Y", "ACCELEROMETER_GRAVITY_STDEV_Z",
+                     "ACCELEROMETER_GRAVITY_STANDARDDEVIATION_X", "ACCELEROMETER_GRAVITY_STANDARDDEVIATION_Y", "ACCELEROMETER_GRAVITY_STANDARDDEVIATION_Z",
                      "GYROSCOPE_BODY_MEAN_X", "GYROSCOPE_BODY_MEAN_Y", "GYROSCOPE_BODY_MEAN_Z",
-                     "GYROSCOPE_BODY_STDEV_X", "GYROSCOPE_BODY_STDEV_Y", "GYROSCOPE_BODY_STDEV_Z")
+                     "GYROSCOPE_BODY_STANDARDDEVIATION_X", "GYROSCOPE_BODY_STANDARDDEVIATION_Y", "GYROSCOPE_BODY_STANDARDDEVIATION_Z")
 
 # extract from dfDataSet.full, columns numbers that match vFeatureIndices
 # feature columns are offsetted by 2 because of SubjectID and Activity columns
@@ -82,7 +82,7 @@ dfDataSet.molten <- transform(dfDataSet.molten, SignalMeasure=as.character(Signa
 # SignalMeasure variables are composed of 4 separate characteristics:
 # 1. SensorType - sensor from which a signal was recorded (ACCELROMETER / GYROSCOPE)
 # 2. SignalSource - source which produced acceleration signals (BODY / GRAVITY)
-# 3. SignalStatistic - signal statistic (MEAN / STDEV) created by applying a low-pass Butterworth filter 
+# 3. SignalStatistic - signal statistic (MEAN / STANDARDDEVIATION) created by applying a low-pass Butterworth filter 
 # 4. SignalAxis - axis along which a signal was measured (X / Y / Z)
 # SignalMeasure could be separated into new variables
 lSignalMeasure <- strsplit(dfDataSet.molten$SignalMeasure,"_")
