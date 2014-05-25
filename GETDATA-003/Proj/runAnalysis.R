@@ -86,7 +86,7 @@ dfDataSet.molten$SignalMeasure <- with(dfDataSet.molten,
                                                   to=vFeatures.tidy)})
 
 dfDataSet.summary <- ddply(dfDataSet.molten, c("SubjectID","Activity","SignalMeasure"),
-                           summarise, SignalValue.average=mean(SignalValue))
+                           summarise, SignalValueAverage=mean(SignalValue))
 
 # output this tidy data set summary to file
 write.table(dfDataSet.summary, file="signal_measure_summary.txt", 
