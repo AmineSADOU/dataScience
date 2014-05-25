@@ -50,24 +50,24 @@ dfDataSet.full$Activity <- with(dfDataSet.full,
 regexPattern <- "^(t(body|gravity)(acc|gyro)(mean|std))"
 vFeatures.indices <- grep(regexPattern, vFeatures, ignore.case=T, value=F)
 vFeatures.sub <- vFeatures[vFeatures.indices]
-vFeatures.tidy <- c("SIGNAL_FROM_ACCL_BODY_MEAN_IN_X_AXIS", 
-                    "SIGNAL_FROM_ACCL_BODY_MEAN_IN_Y_AXIS", 
-                    "SIGNAL_FROM_ACCL_BODY_MEAN_IN_Z_AXIS",
-                    "SIGNAL_FROM_ACCL_BODY_STDEV_IN_X_AXIS", 
-                    "SIGNAL_FROM_ACCL_BODY_STDEV_IN_Y_AXIS", 
-                    "SIGNAL_FROM_ACCL_BODY_STDEV_IN_Z_AXIS",
-                    "SIGNAL_FROM_ACCL_GRAVITY_MEAN_IN_X_AXIS", 
-                    "SIGNAL_FROM_ACCL_GRAVITY_MEAN_IN_Y_AXIS", 
-                    "SIGNAL_FROM_ACCL_GRAVITY_MEAN_IN_Z_AXIS",
-                    "SIGNAL_FROM_ACCL_GRAVITY_STDEV_IN_X_AXIS", 
-                    "SIGNAL_FROM_ACCL_GRAVITY_STDEV_IN_Y_AXIS", 
-                    "SIGNAL_FROM_ACCL_GRAVITY_STDEV_IN_Z_AXIS",
-                    "SIGNAL_FROM_GYRO_BODY_MEAN_IN_X_AXIS", 
-                    "SIGNAL_FROM_GYRO_BODY_MEAN_IN_Y_AXIS", 
-                    "SIGNAL_FROM_GYRO_BODY_MEAN_IN_Z_AXIS",
-                    "SIGNAL_FROM_GYRO_BODY_STDEV_IN_X_AXIS", 
-                    "SIGNAL_FROM_GYRO_BODY_STDEV_IN_Y_AXIS", 
-                    "SIGNAL_FROM_GYRO_BODY_STDEV_IN_Z_AXIS")
+vFeatures.names <- c("ACCELEROMETER_BODY_X_MEAN", 
+                    "ACCELEROMETER_BODY_Y_MEAN", 
+                    "ACCELEROMETER_BODY_Z_MEAN",
+                    "ACCELEROMETER_BODY_X_STDEV", 
+                    "ACCELEROMETER_BODY_Y_STDEV", 
+                    "ACCELEROMETER_BODY_Z_STDEV",
+                    "ACCELEROMETER_GRAVITY_X_MEAN", 
+                    "ACCELEROMETER_GRAVITY_Y_MEAN", 
+                    "ACCELEROMETER_GRAVITY_Z_MEAN",
+                    "ACCELEROMETER_GRAVITY_X_STDEV", 
+                    "ACCELEROMETER_GRAVITY_Y_STDEV", 
+                    "ACCELEROMETER_GRAVITY_Z_STDEV",
+                    "GYROSCOPE_BODY_X_MEAN", 
+                    "GYROSCOPE_BODY_Y_MEAN", 
+                    "GYROSCOPE_BODY_Z_MEAN",
+                    "GYROSCOPE_BODY_X_STDEV", 
+                    "GYROSCOPE_BODY_Y_STDEV", 
+                    "GYROSCOPE_BODY_Z_STDEV")
 
 # extract from dfDataSet.full, columns numbers that match vFeatureIndices
 # feature columns are offsetted by 2 because of SubjectID and Activity columns
@@ -79,13 +79,29 @@ dfDataSet.sub <- dfDataSet.full[,c(1,2,2+vFeatures.indices)]
 dfDataSet.molten <- melt(dfDataSet.sub, 
                          id.vars=c("SubjectID", "Activity"), 
                          variable.name="SignalMeasure", value.name="SignalValue")
-# map SignalMeasure factor levels to satisfy tidy data principles
+
+# map SignalMeasure factor levels to descriptive names
 dfDataSet.molten$SignalMeasure <- with(dfDataSet.molten, 
                                        {mapvalues(SignalMeasure, 
                                                   from=levels(SignalMeasure), 
-                                                  to=vFeatures.tidy)})
+                                                  to=vFeatures.names)})
+# separate SignalMeasure into separate variables
+dfDataSet.molten <- transform(dfDataSet.molten, SignalMeasure=as.character(SignalMeasure))
 
-dfDataSet.summary <- ddply(dfDataSet.molten, c("SubjectID","Activity","SignalMeasure"),
+lSignalMeasure <- strsplit(dfDataSet.molten$SignalMeasure,"_")
+dfSignalMeasure <- ldply(lSignalMeasure)
+colnames(dfSignalMeasure) <- c("SensorType","SignalSource","SignalAxis","SignalStatistic")
+dfDataSet.molten <- cbind(dfDataSet.molten, dfSignalMeasure)
+
+dfDataSet.molten <- transform(dfDataSet.molten, 
+                              SensorType=as.factor(SensorType),
+                              SignalSource=as.factor(SignalSource),
+                              SignalAxis=as.factor(SignalAxis),
+                              SignalStatistic=as.factor(SignalStatistic))
+
+dfDataSet.molten <- dfDataSet.molten[c("SubjectID","Activity","SensorType","SignalSource","SignalStatistic","SignalAxis","SignalValue")]
+dfDataSet.summary <- ddply(dfDataSet.molten, 
+                           c("SubjectID","Activity","SensorType","SignalSource","SignalStatistic","SignalAxis"),
                            summarise, SignalValueAverage=mean(SignalValue))
 
 # output this tidy data set summary to file
