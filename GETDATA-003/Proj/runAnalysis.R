@@ -76,7 +76,7 @@ dfDataSet.molten$SignalMeasure <- with(dfDataSet.molten,
                                        {mapvalues(SignalMeasure, 
                                                   from=levels(SignalMeasure), 
                                                   to=vFeatures.names)})
-# SignalMeasure is composed of 4 characteristics
+# transform SignalMeasure to a character vector that could be split
 dfDataSet.molten <- transform(dfDataSet.molten, SignalMeasure=as.character(SignalMeasure))
 
 # SignalMeasure variables are composed of 4 separate characteristics:
