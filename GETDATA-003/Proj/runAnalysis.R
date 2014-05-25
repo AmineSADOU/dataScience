@@ -37,7 +37,7 @@ rm(list=ls(pattern="*.tmp"))
 
 # dfDataSet.full has columns in the order: SubjectID, Activity, Features...(561)
 # assign column names accordingly
-colnames(dfDataSet.full) <- c("SubjectID","Activity",vFeaturesTidy)
+colnames(dfDataSet.full) <- c("SubjectID","Activity",vFeatures)
 # transform SubjectID and Activity as factors
 dfDataSet.full <- transform(dfDataSet.full, 
                             SubjectID=as.factor(SubjectID), Activity=as.factor(Activity))
@@ -78,7 +78,7 @@ dfDataSet.sub <- dfDataSet.full[,c(1,2,2+vFeatures.indices)]
 # to form a single column for sensor measures and a corresponding column for their values
 dfDataSet.molten <- melt(dfDataSet.sub, 
                          id.vars=c("SubjectID", "Activity"), 
-                         variable.name="SignalMeasure", value.name="SignalValue")
+                         variable.name="SignalMeasure", value.name="SignalStatisticValue")
 
 # map SignalMeasure factor levels to descriptive names
 dfDataSet.molten$SignalMeasure <- with(dfDataSet.molten, 
@@ -99,10 +99,10 @@ dfDataSet.molten <- transform(dfDataSet.molten,
                               SignalAxis=as.factor(SignalAxis),
                               SignalStatistic=as.factor(SignalStatistic))
 
-dfDataSet.molten <- dfDataSet.molten[c("SubjectID","Activity","SensorType","SignalSource","SignalStatistic","SignalAxis","SignalValue")]
+dfDataSet.molten <- dfDataSet.molten[c("SubjectID","Activity","SensorType","SignalSource","SignalStatistic","SignalAxis","SignalStatisticValue")]
 dfDataSet.summary <- ddply(dfDataSet.molten, 
                            c("SubjectID","Activity","SensorType","SignalSource","SignalStatistic","SignalAxis"),
-                           summarise, SignalValueAverage=mean(SignalValue))
+                           summarise, SignalStatisticAverage=mean(SignalStatisticValue))
 
 # output this tidy data set summary to file
 write.table(dfDataSet.summary, file="signal_measure_summary.txt", 

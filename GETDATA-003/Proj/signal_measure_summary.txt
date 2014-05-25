@@ -1,4 +1,4 @@
-SubjectID	Activity	SensorType	SignalSource	SignalStatistic	SignalAxis	SignalValueAverage
+SubjectID	Activity	SensorType	SignalSource	SignalStatistic	SignalAxis	SignalStatisticAverage
 1	WALKING	ACCELEROMETER	BODY	MEAN	X	0.277330758736842
 1	WALKING	ACCELEROMETER	BODY	MEAN	Y	-0.0173838185273684
 1	WALKING	ACCELEROMETER	BODY	MEAN	Z	-0.111148103547368
